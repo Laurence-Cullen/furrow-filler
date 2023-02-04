@@ -27,5 +27,5 @@ def load_polygon_from_svg(filename: str, colour: str) -> Polygon:
     # split points_string into a list of strings
     points_string_list = points_string.split(' ')
     # convert each string in points_string_list into a Point object
-    points = [Point(*map(float, point_string.split(','))) for point_string in points_string_list]
+    points = [Point(*map(float, point_string.split(',')), index=i) for i, point_string in enumerate(points_string_list)]
     return Polygon(points, colour)
