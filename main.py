@@ -46,6 +46,28 @@ def find_unique_points(point_pairs: list[tuple[Point, Point]]) -> (set[Point], s
     return unique_points1, unique_points2
 
 
+def sort_points_by_index(points: list[Point]) -> list[Point]:
+    """Sort a list of points by their index."""
+    return sorted(points, key=lambda point: point.index)
+
+
+def fuse_polygons(polygon1: Polygon, polygon2: Polygon) -> Polygon:
+    """Fuse two polygons together."""
+    # find the closest points between the two polygons
+    closest_point_pairs = n_closest_point_pairs(polygon1, polygon2, 25)
+    unique_points1, unique_points2 = find_unique_points(closest_point_pairs)
+
+    # sort unique points
+    unique_points1 = sort_points_by_index(unique_points1)
+    unique_points2 = sort_points_by_index(unique_points2)
+
+    # combine unique points
+    unique_points = unique_points1 + unique_points2
+
+    # create a new polygon from the unique points
+    return Polygon(unique_points, 'g')
+
+
 if __name__ == '__main__':
     left = load_polygon_from_svg('left.svg', 'r')
     plot_polygon(left)
@@ -53,19 +75,9 @@ if __name__ == '__main__':
     right = load_polygon_from_svg('right.svg', 'b')
     plot_polygon(right)
 
-    # closest_point1, closest_point2 = closest_points(left, right)
-    # plt.plot([closest_point1.x, closest_point2.x], [closest_point1.y, closest_point2.y], 'k')
-
-    closest_points = n_closest_point_pairs(left, right, 25)
-    unique_points1, unique_points2 = find_unique_points(closest_points)
-
-
-
-    # for point1, point2 in closest_points:
-    #     plt.plot([point1.x, point2.x], [point1.y, point2.y], 'k')
-
-    # fused = fuse_polygons_concave_hull(left, right)
-    # plot_polygon(fused)
+    # create a new polygon from the unique points
+    fused = fuse_polygons(left, right)
+    plot_polygon(fused)
 
     # invert y axis of plot
     plt.gca().invert_yaxis()
